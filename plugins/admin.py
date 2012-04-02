@@ -11,25 +11,23 @@ import subprocess
 @hook.command(autohelp=False)
 def admins(inp, notice=None, bot=None):
     ".admins -- Lists bot's admins."
-    adminlist = bot.config["admins"]
     if adminlist:
-        notice("Admins are: %s." % ", ".join(adminlist))
+        notice("Admins are: %s." % ", ".join(bot.config["admins"]))
     else:
         notice("No users are admins!")
     return
 
 
 @hook.command(adminonly=True)
-def admin(inp, notice=None, bot=None, config=None):
-    ".admin <nick|host> -- Make <nick|host> an admin."
+def addadmin(inp, notice=None, bot=None, config=None):
+    ".addadmin <nick|host> -- Make <nick|host> an admin."
     target = inp.lower()
-    adminlist = bot.config["admins"]
-    if target in adminlist:
+    if target in bot.config["admins"]:
         notice("%s is already an admin." % target)
     else:
         notice("%s is now an admin." % target)
-        adminlist.append(target)
-        adminlist.sort()
+        bot.config["admins"].append(target)
+        bot.config["admins"].sort()
         json.dump(bot.config, open('config', 'w'), sort_keys=True, indent=2)
     return
 
@@ -38,11 +36,10 @@ def admin(inp, notice=None, bot=None, config=None):
 def unadmin(inp, notice=None, bot=None, config=None):
     ".unadmin <nick|host> -- Make <nick|host> a non-admin."
     target = inp.lower()
-    adminlist = bot.config["admins"]
-    if target in adminlist:
+    if target in bot.config["admins"]:
         notice("%s is no longer an admin." % target)
-        adminlist.remove(target)
-        adminlist.sort()
+        bot.config["admins"].remove(target)
+        bot.config["admins"].sort()
         json.dump(bot.config, open('config', 'w'), sort_keys=True, indent=2)
     else:
         notice("%s is not an admin." % target)
